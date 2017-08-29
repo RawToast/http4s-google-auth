@@ -1,4 +1,4 @@
-#Http4s Google Auth Example
+# Http4s Google Auth Example
 
 Simple example of using the Google authentication services with Http4s and Scala.
 
