@@ -1,0 +1,56 @@
+@(apiKey: String)
+
+<html>
+    <head>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous" async defer></script>
+        <meta name="google-signin-client_id" content= @{s"$apiKey"}>
+    </head>
+
+
+    <body>
+
+        <h2>Sign in</h2>
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+        <b><h3>User details</h3>
+            <h4 id="userDetails"></h4>
+            <h4 id="userName"></h4>
+        </b>
+
+        <h2>Sign out</h2>
+        <a href="#" onclick="signOut();">Sign out</a>
+
+    </body>
+
+    <script>
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            var id_token = googleUser.getAuthResponse().id_token;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://localhost:8080/tokensignin');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send('idtoken=' + id_token);
+
+            xhr.onload = function(){
+                console.log('Signed in as: ' + xhr.responseText);
+                var respJson = JSON.parse(xhr.responseText);
+                $('#userDetails').text(respJson.userId);
+                $('#userName').text(respJson.name);
+            }
+        }
+
+
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+                console.log('User signed out.');
+                $('#userDetails').text("");
+                $('#userName').text("");
+            });
+        }
+    </script>
+
+
+</html>
